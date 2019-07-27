@@ -1,0 +1,6 @@
+[
+  {
+    "caption": "format insert sql",
+    "command": "insert_sql_format"
+  }
+]

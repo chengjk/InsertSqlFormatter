@@ -1,0 +1,12 @@
+[
+  {
+    "id": "tools",
+    "children": [
+      {
+        "caption": "format insert sql to table",
+        "id": "insert_sql_format",
+        "command": "insert_sql_format"
+      }
+    ]
+  }
+]

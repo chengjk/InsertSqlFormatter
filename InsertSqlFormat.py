@@ -1,21 +1,21 @@
 import sublime
 import sublime_plugin
 import logging
+import re
 
+logging.basicConfig(level=logging.WARN)
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
 #default 1.8, override by config
 chineseWordLen=1.8
 
 class InsertSqlFormatCommand(sublime_plugin.TextCommand):
 
 	def run(self, edit):
-		log.debug("starting")
-
+		log.debug("starting format insert sql")
 		settings = sublime.load_settings("config.sublime-settings")
 		chineseWordLen=settings.get("chinese_word_lenght")
+		log.debug("load config")
 		log.info("chinese_word_lenght:"+'{:2.1f}'.format(chineseWordLen))
-
 		regions=self.getSelectRegion()
 		for region in regions:
 			result=self.formatRegion(region)
@@ -51,14 +51,15 @@ class InsertSqlFormatCommand(sublime_plugin.TextCommand):
 		text=text.replace("\t","")
 		#replace mutil space to single space.
 		text=" ".join(text.split())
-		lines=text.split("(")
-		if len(lines)<3:
-			log.info("without field name.")
-			return text
+		# lines=text.split("(")#TODO split values
+		#print(lines)
+		sqlObj=self.parseSql(text)
+		# if len(lines)<3:
+		# 	log.info("without field name.")
+		# 	return text
 
-		names=lines[1].split(",")
-		values=lines[2].split(",")
-
+		names=sqlObj["names"].split(",")
+		values=sqlObj["values"].split(",")
 		#keep name and value in the same len
 		finalNames=[]
 		finalValues=[]
@@ -77,14 +78,15 @@ class InsertSqlFormatCommand(sublime_plugin.TextCommand):
 		fieldLen=len(finalNames)
 
 		#build result
-		result=lines[0]+"\n("
+		result=sqlObj["header"]+"\n"
 		## append names
 		for i in range(fieldLen):
 			fname=finalNames[i]
 			result=result+fname
 			if i<fieldLen-1:
 				result=result+","
-		result=result+"\n("
+		result=result+" values \n"
+
 		## append values
 		for i in range(fieldLen):
 			fvalue=finalValues[i]
@@ -92,6 +94,19 @@ class InsertSqlFormatCommand(sublime_plugin.TextCommand):
 			if i<fieldLen-1:
 				result=result+","
 		return result+"\n"
+
+	def parseSql(self,text):
+		i=text.index("(")
+		header=text[0:i]
+		log.debug("header:"+header)
+		body=text[i:]
+		p=re.compile("[\s]*values[\s]*")
+		lines=p.split(body)
+		names=lines[0]
+		values=lines[1]
+		log.debug("names:"+names)
+		log.debug("values:"+values)
+		return {"header":header,"names":names,"values":values}
 
 	def strAppend(self,text,char,n):
 		for i in range(int(n)):

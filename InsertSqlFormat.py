@@ -11,6 +11,7 @@ chineseWordLen=1.8
 class InsertSqlFormatCommand(sublime_plugin.TextCommand):
 
 	def run(self, edit):
+		logging.basicConfig(level=logging.WARN)
 		log.debug("starting format insert sql")
 		settings = sublime.load_settings("config.sublime-settings")
 		chineseWordLen=settings.get("chinese_word_lenght")
@@ -34,25 +35,25 @@ class InsertSqlFormatCommand(sublime_plugin.TextCommand):
 
 	def formatRegion(self,region):
 		inputStr=self.view.substr(region)+"\n"
+		# return self.formatSql(inputStr)
 		#todo inputStr could be mutil sql.
-		# sqls=inputStr.split(";")
-		# result=""
-		# for s in sqls:
-		# 	if not s:
-		# 		log.debug(s)
-		# 		result=result+self.formatSql(s+";")
-		# return result
-		return self.formatSql(inputStr)
+		sqls=inputStr.split(";")
+		print(sqls)
+		result=""
+		for s in sqls:
+			result=result+self.formatSql(s+";")
+		return result
+		
 
 
 	def formatSql(self,insertSql):
 		# inputStr=self.view.substr(region)+"\n"
 		text=insertSql.replace("\n","")
 		text=text.replace("\t","")
+		if text==";":
+			return ""
 		#replace mutil space to single space.
 		text=" ".join(text.split())
-		# lines=text.split("(")#TODO split values
-		#print(lines)
 		sqlObj=self.parseSql(text)
 		# if len(lines)<3:
 		# 	log.info("without field name.")

@@ -1,6 +1,6 @@
 [
   {
-    "caption": "InsertSqlFormatter:format insert sql to table ",
+    "caption": "InsertSqlFormatter: align field names and values with space.",
     "command": "insert_sql_format"
   }
 ]

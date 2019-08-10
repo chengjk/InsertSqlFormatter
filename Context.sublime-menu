@@ -2,6 +2,6 @@
   {
     "id": "insert_sql_format",
     "command": "insert_sql_format",
-    "caption": "format insert sql to table"
+    "caption": "format insert sql"
   }
 ]

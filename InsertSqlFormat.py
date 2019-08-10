@@ -34,14 +34,16 @@ class InsertSqlFormatCommand(sublime_plugin.TextCommand):
 
 
 	def formatRegion(self,region):
-		inputStr=self.view.substr(region)+"\n"
+		inputStr=self.view.substr(region)
 		# return self.formatSql(inputStr)
 		#todo inputStr could be mutil sql.
 		sqls=inputStr.split(";")
 		print(sqls)
 		result=""
 		for s in sqls:
-			result=result+self.formatSql(s+";")
+			formated=self.formatSql(s+";")
+			if formated:
+				result=result+formated+"\n"
 		return result
 		
 
@@ -55,9 +57,13 @@ class InsertSqlFormatCommand(sublime_plugin.TextCommand):
 		#replace mutil space to single space.
 		text=" ".join(text.split())
 		sqlObj=self.parseSql(text)
-		# if len(lines)<3:
-		# 	log.info("without field name.")
-		# 	return text
+			
+		#without names retrun
+		if not "names" in sqlObj:
+			log.info("without field name.")
+			# log.info(text)
+			log.info(sqlObj)
+			return text
 
 		names=sqlObj["names"].split(",")
 		values=sqlObj["values"].split(",")
@@ -94,7 +100,7 @@ class InsertSqlFormatCommand(sublime_plugin.TextCommand):
 			result=result+fvalue
 			if i<fieldLen-1:
 				result=result+","
-		return result+"\n"
+		return result
 
 	def parseSql(self,text):
 		i=text.index("(")
@@ -103,11 +109,18 @@ class InsertSqlFormatCommand(sublime_plugin.TextCommand):
 		body=text[i:]
 		p=re.compile("[\s]*values[\s]*")
 		lines=p.split(body)
-		names=lines[0]
-		values=lines[1]
-		log.debug("names:"+names)
-		log.debug("values:"+values)
-		return {"header":header,"names":names,"values":values}
+
+		if len(lines)==2:
+			names=lines[0]
+			values=lines[1]
+			log.debug("names:"+names)
+			log.debug("values:"+values)
+			return {"header":header,"names":names,"values":values}
+		else:		
+			values=lines[0]
+			log.debug("values:"+values)
+			return {"header":header,"values":values}
+		
 
 	def strAppend(self,text,char,n):
 		for i in range(int(n)):

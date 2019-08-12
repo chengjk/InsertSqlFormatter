@@ -100,13 +100,11 @@ class InsertSqlFormatCommand(sublime_plugin.TextCommand):
 		return result
 
 	def parseSql(self,text):
-		
-		print("xxxxxxx"+text)
 		i=text.index("(")
 		header=text[0:i]
 		log.debug("header:"+header)
 		body=text[i:]
-		p=re.compile("[\s]*values[\s]*")
+		p=re.compile("[\s]*values[\s]*",re.IGNORECASE)
 		lines=p.split(body)
 
 		if len(lines)==2:

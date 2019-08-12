@@ -35,27 +35,24 @@ class InsertSqlFormatCommand(sublime_plugin.TextCommand):
 
 	def formatRegion(self,region):
 		inputStr=self.view.substr(region)
-		# return self.formatSql(inputStr)
-		#todo inputStr could be mutil sql.
+		inputStr=inputStr.replace("\n","")
+		inputStr=inputStr.replace("\t","")
+		#replace mutil space to single space.
+		inputStr=" ".join(inputStr.split())
 		sqls=inputStr.split(";")
 		print(sqls)
 		result=""
 		for s in sqls:
-			formated=self.formatSql(s+";")
+			formated=self.formatSql(s)
 			if formated:
-				result=result+formated+"\n"
+				result=result+formated+";\n"
 		return result
 		
-
-
 	def formatSql(self,insertSql):
-		# inputStr=self.view.substr(region)+"\n"
-		text=insertSql.replace("\n","")
-		text=text.replace("\t","")
-		if text==";":
-			return ""
-		#replace mutil space to single space.
-		text=" ".join(text.split())
+		if ""==insertSql:
+			return None
+		
+		text=insertSql
 		sqlObj=self.parseSql(text)
 			
 		#without names retrun
@@ -103,6 +100,8 @@ class InsertSqlFormatCommand(sublime_plugin.TextCommand):
 		return result
 
 	def parseSql(self,text):
+		
+		print("xxxxxxx"+text)
 		i=text.index("(")
 		header=text[0:i]
 		log.debug("header:"+header)

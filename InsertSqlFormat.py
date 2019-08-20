@@ -3,15 +3,13 @@ import sublime_plugin
 import logging
 import re
 
-logging.basicConfig(level=logging.WARN)
 log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
 #default 1.8, override by config
 chineseWordLen=1.8
 
 class InsertSqlFormatCommand(sublime_plugin.TextCommand):
-
 	def run(self, edit):
-		logging.basicConfig(level=logging.WARN)
 		log.debug("starting format insert sql")
 		settings = sublime.load_settings("config.sublime-settings")
 		chineseWordLen=settings.get("chinese_word_lenght")
@@ -40,7 +38,9 @@ class InsertSqlFormatCommand(sublime_plugin.TextCommand):
 		#replace mutil space to single space.
 		inputStr=" ".join(inputStr.split())
 		sqls=inputStr.split(";")
-		print(sqls)
+		log.debug("*********** origin sql list **********")
+		log.debug(sqls)
+		log.debug("*********** origin sql list end **********")
 		result=""
 		for s in sqls:
 			formated=self.formatSql(s)
@@ -102,7 +102,8 @@ class InsertSqlFormatCommand(sublime_plugin.TextCommand):
 	def parseSql(self,text):
 		i=text.index("(")
 		header=text[0:i]
-		log.debug("header:"+header)
+		log.debug("========header==========")
+		log.debug(header)
 		body=text[i:]
 		p=re.compile("[\s]*values[\s]*",re.IGNORECASE)
 		lines=p.split(body)
@@ -110,8 +111,11 @@ class InsertSqlFormatCommand(sublime_plugin.TextCommand):
 		if len(lines)==2:
 			names=lines[0]
 			values=lines[1]
-			log.debug("names:"+names)
-			log.debug("values:"+values)
+			log.debug("========names==========")
+			log.debug(names)
+			log.debug("========values==========")
+			log.debug(values)
+			log.debug("======== end ==========")
 			return {"header":header,"names":names,"values":values}
 		else:		
 			values=lines[0]

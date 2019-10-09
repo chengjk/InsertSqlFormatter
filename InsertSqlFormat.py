@@ -69,7 +69,10 @@ class InsertSqlFormatCommand(sublime_plugin.TextCommand):
 		finalValues=[]
 		index=0
 		for name in names:
-			value=values[index]
+			if index>=len(values):
+				value="null"
+			else:
+				value=values[index]
 			lenght=max(self.len(name),self.len(value))
 			if lenght==self.len(name):
 				value=self.strAppend(value," ",lenght-self.len(value))

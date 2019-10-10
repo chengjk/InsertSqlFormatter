@@ -3,8 +3,8 @@ import sublime_plugin
 import logging
 import re
 
+logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
 #default 1.8, override by config
 chineseWordLen=1.8
 
@@ -139,7 +139,3 @@ class InsertSqlFormatCommand(sublime_plugin.TextCommand):
 			else:
 				result=result+1
 		return result;
-
-
-
-

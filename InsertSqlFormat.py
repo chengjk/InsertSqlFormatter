@@ -73,6 +73,7 @@ class InsertSqlFormatCommand(sublime_plugin.TextCommand):
 				value="null"
 			else:
 				value=values[index]
+			# get max len
 			lenght=max(self.len(name),self.len(value))
 			if lenght==self.len(name):
 				value=self.strAppend(value," ",lenght-self.len(value))
@@ -85,14 +86,14 @@ class InsertSqlFormatCommand(sublime_plugin.TextCommand):
 		fieldLen=len(finalNames)
 
 		#build result
-		result=sqlObj["header"]+"\n"
+		result=sqlObj["header"]+"\n ("
 		## append names
 		for i in range(fieldLen):
 			fname=finalNames[i]
 			result=result+fname
 			if i<fieldLen-1:
 				result=result+","
-		result=result+" values \n"
+		result=result+") values \n ("
 
 		## append values
 		for i in range(fieldLen):
@@ -100,6 +101,7 @@ class InsertSqlFormatCommand(sublime_plugin.TextCommand):
 			result=result+fvalue
 			if i<fieldLen-1:
 				result=result+","
+		result=result+")"
 		return result
 
 	def parseSql(self,text):
@@ -108,6 +110,8 @@ class InsertSqlFormatCommand(sublime_plugin.TextCommand):
 		log.debug("========header==========")
 		log.debug(header)
 		body=text[i:]
+		body=body.replace("(","")
+		body=body.replace(")","")
 		p=re.compile("[\s]*values[\s]*",re.IGNORECASE)
 		lines=p.split(body)
 
@@ -124,7 +128,6 @@ class InsertSqlFormatCommand(sublime_plugin.TextCommand):
 			values=lines[0]
 			log.debug("values:"+values)
 			return {"header":header,"values":values}
-		
 
 	def strAppend(self,text,char,n):
 		for i in range(int(n)):

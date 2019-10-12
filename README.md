@@ -67,6 +67,7 @@ insert into `test`.`agent_user`
 ```
 
 ### Without Names
+formate to single line
 
 ```sql
 -- origin
@@ -77,3 +78,33 @@ insert into `test`.`agent_user` values ( '中文测试', '1', 'chengxxxxxai@foxm
 insert into `test`.`agent_user` values ( '中文测试', '1', 'chengxxxxxai@foxmail.com', '28950596', '2018-10-23', '150xxxx1256', '2018-10-23', 'WF');
 
 ```
+### if name absent
+
+set undefined as default field name
+
+```sql
+-- origin
+insert into `test`.`agent_user` ( `status`, `id`, `email`, `user_id`, `created`, `tel`, `modified`) values ( '中文测试', '1', 'chengxxxxxai@foxmail.com', '28950596', '2018-10-23', '150xxxx1256', '2018-10-23', 'WF');
+-- formated
+
+insert into `test`.`agent_user` 
+ ( `status`, `id`, `email`                   , `user_id` , `created`   , `tel`        , `modified`  ,undefined) values 
+ ('中文测试', '1' , 'chengxxxxxai@foxmail.com', '28950596', '2018-10-23', '150xxxx1256', '2018-10-23', 'WF'   );
+```
+
+
+### if value absent
+
+set null as default field value
+
+```sql
+-- origin
+insert into `test`.`agent_user` ( `status`, `id`, `email`, `user_id`, `created`, `tel`, `modified`,`agent`) values ( '中文测试', '1', 'chengxxxxxai@foxmail.com', '28950596', '2018-10-23', '150xxxx1256', '2018-10-23');
+-- formated
+insert into `test`.`agent_user` 
+ ( `status`, `id`, `email`                   , `user_id` , `created`   , `tel`        , `modified`  ,`agent`) values 
+ ('中文测试', '1' , 'chengxxxxxai@foxmail.com', '28950596', '2018-10-23', '150xxxx1256', '2018-10-23',null   );
+
+```
+
+

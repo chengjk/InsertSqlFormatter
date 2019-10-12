@@ -55,7 +55,7 @@ class InsertSqlFormatCommand(sublime_plugin.TextCommand):
 		text=insertSql
 		sqlObj=self.parseSql(text)
 			
-		#without names retrun
+		# retrun if without names 
 		if not "names" in sqlObj:
 			log.info("without field name.")
 			# log.info(text)
@@ -67,22 +67,33 @@ class InsertSqlFormatCommand(sublime_plugin.TextCommand):
 		#keep name and value in the same len
 		finalNames=[]
 		finalValues=[]
-		index=0
-		for name in names:
-			if index>=len(values):
+
+		maxFieldLen=max(len(names),len(values))
+		for i in range(maxFieldLen):
+			name=""
+			value=""
+			if i>=len(names):
+				# set default field name
+			    name="undefined"
+			else:
+				name=names[i]
+			if i>=len(values):
+				# set default field value
 				value="null"
 			else:
-				value=values[index]
+				value=values[i]
+			
 			# get max len
 			lenght=max(self.len(name),self.len(value))
 			if lenght==self.len(name):
+				# keep lenght with space
 				value=self.strAppend(value," ",lenght-self.len(value))
 			else:
+				# keep lenght with space
 				name=self.strAppend(name," ",lenght-self.len(name))
 
 			finalNames.append(name)
 			finalValues.append(value)
-			index=index+1
 		fieldLen=len(finalNames)
 
 		#build result

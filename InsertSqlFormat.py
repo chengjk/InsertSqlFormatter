@@ -121,8 +121,6 @@ class InsertSqlFormatCommand(sublime_plugin.TextCommand):
 		log.debug("========header==========")
 		log.debug(header)
 		body=text[i:]
-		body=body.replace("(","")
-		body=body.replace(")","")
 		p=re.compile("[\s]*values[\s]*",re.IGNORECASE)
 		lines=p.split(body)
 
@@ -130,8 +128,12 @@ class InsertSqlFormatCommand(sublime_plugin.TextCommand):
 			names=lines[0]
 			values=lines[1]
 			log.debug("========names==========")
+			# remote first and last ()
+			names=names.strip()[1:len(names)-1];
 			log.debug(names)
 			log.debug("========values==========")
+			# remote first and last ()
+			values=values.strip()[1:len(values)-1];
 			log.debug(values)
 			log.debug("======== end ==========")
 			return {"header":header,"names":names,"values":values}
